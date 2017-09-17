@@ -1,0 +1,18 @@
+
+# Database settings
+
+db-type:mysql
+db-host:localhost
+db-name:rocketmapdb
+db-user:rocketmapuser
+db-pass:rocketmappassword
+
+gmaps-key: ThisIsReallyImportant.jpeg
+
+# location and area
+
+#geofence-file:
+
+location: bratislava
+
+gym-info:true
