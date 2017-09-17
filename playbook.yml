@@ -25,6 +25,8 @@
     git:
       repo: 'https://github.com/RocketMap/RocketMap.git'
       dest: /vagrant/RocketMap
+      refspec: '+refs/pull/2291/head:PR'
+      version: PR
 
   - name: Clone PokeAlarm
     git:
@@ -41,8 +43,6 @@
   - name: Instal Pip Requirements
     pip:
       requirements: /vagrant/RocketMap/requirements.txt
-
-
 
   - name: Node requirements
     npm:
