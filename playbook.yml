@@ -42,9 +42,11 @@
     pip:
       requirements: /vagrant/RocketMap/requirements.txt
 
+
+
   - name: Node requirements
     npm:
-      path: /vagrant/RocketMap/
+      path: /vagrant/RocketMap
 
   - name: Make Database
     mysql_db:
@@ -96,6 +98,9 @@
   - name: move rocketmap.service
     copy: src=config/webserver.conf dest=/etc/init/rocketmapserver.conf owner=root mode=0600
 
+  - name: move rocketmap.service
+    copy: src=config/scanserver.conf dest=/etc/init/scanserver.conf owner=root mode=0600
+
   - name: move my.cnf
     copy: src=config/my.cnf dest=/etc/mysql/my.cnf owner=root mode=0600
 
@@ -103,6 +108,11 @@
     cron:
       special_time: reboot
       job: service rocketmapserver start
+
+  - name: add cronjob2
+    cron:
+      special_time: reboot
+      job: service scanserver start
 
   - name: restart nginx
     service: name=nginx state=restarted enabled=yes
@@ -113,4 +123,5 @@
   - name: restart rocketmapserver
     service: name=rocketmapserver state=restarted enabled=yes
 
-
+  - name: restart scanserver
+    service: name=scanserver state=restarted enabled=yes

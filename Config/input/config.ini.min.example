@@ -12,7 +12,15 @@ gmaps-key: ThisIsReallyImportant.jpeg
 # location and area
 
 #geofence-file:
-
 location: bratislava
+step-limit: 30
 
-gym-info:true
+#Scan setting
+
+speed-scan
+gym-info
+accountcsv:
+hash-key:
+captcha-solving: true
+captcha-key:
+login-delay: 12
