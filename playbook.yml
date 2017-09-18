@@ -42,7 +42,16 @@
     pip:
       requirements: /vagrant/RocketMap/requirements.txt
 
-
+  - name: Run expect to wait for a successful PXE boot via out-of-band CIMC
+    shell: |
+      npm install -g npm
+      apt-get uninstall node
+      npm install -g n
+      n stable
+      npm install
+      npm rebuild node-sass
+    args:
+      executable: /bin/bash
 
   - name: Node requirements
     npm:
