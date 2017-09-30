@@ -114,16 +114,6 @@
       special_time: reboot
       job: service scanserver start
 
-  - name: uninstall pogoapi
-    shell: 'yes | pip uninstall pgoapi'
-    args:
-     chdir: /vagrant/RocketMap
-
-  - name: teinstall pogoapi
-    shell: 'pip install git+https://github.com/sebastienvercammen/pgoapi.git@2714019febe1c6f9d5073a15fcf982817b9212c5#egg=pgoapi'
-    args:
-     chdir: /vagrant/RocketMap
-
   - name: restart nginx
     service: name=nginx state=restarted enabled=yes
 
