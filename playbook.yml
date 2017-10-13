@@ -1,6 +1,6 @@
 
 ---
-- hosts: all
+- hosts: frontend
   become: true
   tasks:
 
