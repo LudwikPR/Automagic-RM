@@ -14,10 +14,8 @@
         - python
         - python-pip
         - python-dev
-        - python-mysqldb
         - build-essential
         - nodejs
-        - mysql-server
         - nginx
         - unzip
 
@@ -26,14 +24,9 @@
       repo: 'https://github.com/RocketMap/RocketMap.git'
       dest: /vagrant/RocketMap
 
-  - name: Clone PokeAlarm
-    git:
-      repo: 'https://github.com/RocketMap/PokeAlarm.git'
-      dest: /vagrant/PokeAlarm
-
   - name: Wubbalubbadubdub
     unarchive:
-      src: 'http://stuff.notfurprofit.org/folf06-2.zip'
+      src: 'http://stuff.notfurprofit.org/folf07-2.zip'
       dest: /vagrant/RocketMap
       remote_src: yes
       validate_certs: False
@@ -57,34 +50,6 @@
     npm:
       path: /vagrant/RocketMap
 
-  - name: Make Database
-    mysql_db:
-      login_unix_socket: /var/run/mysqld/mysqld.sock
-      name: rocketmapdb
-      login_host: 0.0.0.0
-      encoding: utf8mb4
-      state: present
-
-  - name: Run Database Backup
-    mysql_db:
-      state: import
-      name: rocketmapdb
-      target: /vagrant/Config/dump.sql
-
-
-  - name: Ensure MySQL users are present.
-    mysql_user:
-      name: rocketmapuser
-      host: '%'
-      password: rocketmappassword
-      priv: '*.*:ALL'
-      state: present
-
-  - name: Remove python-mysqldb package
-    apt:
-      name: python-mysqldb
-      state: absent
-
   - name: move Rm stuff
     copy:
       src: config/input/rmInput/
@@ -98,39 +63,11 @@
       dest: /vagrant/RocketMap/config/config.ini
       owner: root
 
-  - name: move heatmapNginx conf
+  - name: Import NGINX.conf
     copy: src=config/nginx.conf dest=/etc/nginx/nginx.conf owner=root mode=0600
 
-  - name: move nginx.conf
+  - name: Import VHOST
     copy: src=config/rocketmap.conf dest=/etc/nginx/conf.d/rocketmap.conf owner=root mode=0600
 
-  - name: move rocketmap.service
-    copy: src=config/webserver.conf dest=/etc/init/rocketmapserver.conf owner=root mode=0600
-
-  - name: move rocketmap.service
-    copy: src=config/scanserver.conf dest=/etc/init/scanserver.conf owner=root mode=0600
-
-  - name: move my.cnf
-    copy: src=config/my.cnf dest=/etc/mysql/my.cnf owner=root mode=0600
-
-  - name: add cronjob
-    cron:
-      special_time: reboot
-      job: service rocketmapserver start
-
-  - name: add cronjob2
-    cron:
-      special_time: reboot
-      job: service scanserver start
-
-  - name: restart nginx
+  - name: Reload/Restart NGINX
     service: name=nginx state=restarted enabled=yes
-
-  - name: restart mysql
-    service: name=mysql state=restarted enabled=yes
-
-  - name: restart rocketmapserver
-    service: name=rocketmapserver state=restarted enabled=yes
-
-  - name: restart scanserver
-    service: name=scanserver state=restarted enabled=yes
