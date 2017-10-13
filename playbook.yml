@@ -1,6 +1,6 @@
 
 ---
-- hosts: frontend
+- hosts: all
   become: true
   tasks:
 
@@ -22,18 +22,18 @@
   - name: Clone Rocketmap
     git:
       repo: 'https://github.com/RocketMap/RocketMap.git'
-      dest: /vagrant/RocketMap
+      dest: /home/vagrant/RocketMap
 
-  - name: Wubbalubbadubdub
+  - name: Install Sprites
     unarchive:
       src: 'http://stuff.notfurprofit.org/folf07-2.zip'
-      dest: /vagrant/RocketMap
+      dest: /home/vagrant/RocketMap
       remote_src: yes
       validate_certs: False
 
-  - name: Instal Pip Requirements
+  - name: Install Pip Requirements
     pip:
-      requirements: /vagrant/RocketMap/requirements.txt
+      requirements: /home/vagrant/RocketMap/requirements.txt
 
   - name: Run expect to wait for a successful PXE boot via out-of-band CIMC
     shell: |
@@ -48,26 +48,54 @@
 
   - name: Node requirements
     npm:
-      path: /vagrant/RocketMap
+      path: /home/vagrant/RocketMap
 
-  - name: move Rm stuff
+  - name: Move Frontend RocketMap Configuration
     copy:
-      src: config/input/rmInput/
-      dest: /vagrant/RocketMap
+      src: src/config/frontend.ini
+      dest: /home/vagrant/RocketMap/config/config.ini
       owner: root
-      directory_mode: true
-
-  - name: move Rm stuff
     copy:
-      src: config/input/config.ini
-      dest: /vagrant/RocketMap/config/config.ini
-      owner: root
+      src: src/config/frontend.css
+      dest: /home/vagrant/RocketMap/static/css/custom.css
+      owner: vagrant
+    copy:
+      src: src/config/frontend.js
+      dest: /home/vagrant/RocketMap/static/js/custom.js
+      owner: vagrant
+    copy:
+      src: src/config/frontend.html
+      dest: /home/vagrant/RocketMap/templates/map.html
+      owner: vagrant
 
-  - name: Import NGINX.conf
-    copy: src=config/nginx.conf dest=/etc/nginx/nginx.conf owner=root mode=0600
+  - name: Import NGINX Configuration
+    copy: 
+      src: config/nginx.conf 
+      dest: /etc/nginx/nginx.conf
+      owner: root 
+      mode: 0600
 
-  - name: Import VHOST
-    copy: src=config/rocketmap.conf dest=/etc/nginx/conf.d/rocketmap.conf owner=root mode=0600
+  - name: Import Frontend VHOST
+    copy: 
+      src: src/nginx/frontend.conf 
+      dest: /etc/nginx/conf.d/frontend.conf 
+      owner: root 
+      mode: 0600
 
   - name: Reload/Restart NGINX
-    service: name=nginx state=restarted enabled=yes
+    service: 
+      name: nginx 
+      state: restarted 
+      enabled: yes
+    
+  - name: Move SYSTEMD deamon
+    copy:
+      src: src/services/web.service
+      dest: /etc/systemd/system/web.ini
+      owner: root
+  
+  - name: Enable SYSTEMD deamon
+    service:
+      name: web.service
+      state: started
+      enabled: yes
